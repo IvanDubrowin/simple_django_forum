@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Forum</title>
+  {% load staticfiles %}
+  <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/mdb.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/font-awesome.css' %}" type="text/css">
+  <link rel="shortcut icon" href="{%  static 'images/favicon.ico' %}">
+  <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+</head>
+<body>
+  <header>
+    <nav class="navbar navbar-light navbar-expand-sm fixed-top bg-info">
+		  <a><img src="{% static 'images/logo.png' %}" width="50" height="50"></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar1" aria-controls="navbar1" aria-expanded="false" aria-label="Toggle navigation">
+    	   <span class="navbar-toggler-icon"></span>
+  	   </button>
+		  <div class="collapse navbar-collapse" id="navbar1">
+			   <ul class="navbar-nav navbar-right">
+           <li class="nav-item active mr-2 ml-2 mb-1 mt-1">
+             <a class="nav-link text-center" href="{% url 'main:index' page_number=1 %}">На главную</a>
+           </li>
+           {% if user.is_authenticated %}
+           <li class="nav-item active mr-2 ml-2 mb-1 mt-1">
+             <a class="nav-link text-center" href="{% url 'main:profile' %}">Профиль</a>
+           </li>
+            <li class="nav-item active mr-2 ml-2 mb-1 mt-1">
+              <a class="nav-link text-center" href="{% url 'main:create_thread' %}">Создать тему</a>
+             </li>
+             <li class="nav-item active mr-2 ml-2 mb-1 mt-1">
+               <a class="nav-link text-center" href="{% url 'logout' %}?next={{ request.path | urlencode }}">Выйти</a>
+              </li>
+            {% else %}
+            <li class="nav-item active mr-2 ml-2 mb-1 mt-1">
+              <a class="nav-link text-center" href="{% url 'login' %}">Войти</a>
+             </li>
+             <li class="nav-item active mr-2 ml-2 mb-1 mt-1">
+               <a class="nav-link text-center" href="{% url 'main:register' %}">Зарегистрироваться</a>
+            </li>
+            {% endif %}
+		   	</ul>
+		  </div>
+	  </nav>
+  </header>
+  <div>
+    <div class="content-block pb-2 pt-2 pl-2 pr-2">
+      {% block content %}
+      {% endblock %}
+    </div>
+    <footer class="footer">
+    <div class="page-footer font-small grey darken-2 mt-3">
+      <div class="footer-copyright text-center py-3">
+        <a class="text-light">© 2018 Copyright:</a>
+        <a class="text-light">Дубровин Иван</a>
+      </div>
+    </div>
+  </footer>
+  </div>
+  <script>
+  $('.like_post').click(function(){
+      $.ajax({
+               type: "POST",
+               url: "{% url 'main:like_and_dislike' %}",
+               data: {'pk': $(this).attr('name'), 'csrfmiddlewaretoken': '{{ csrf_token }}', 'model': 'post', 'type': 'like'},
+               dataType: "json",
+               success: function(response) {
+                      $('.like_post').val(response.likes_count);
+                },
+                error: function(rs, e) {
+                       console.log(rs.responseText);
+                }
+          });
+    });
+    $('.dislike_post').click(function(){
+        $.ajax({
+                 type: "POST",
+                 url: "{% url 'main:like_and_dislike' %}",
+                 data: {'pk': $(this).attr('name'), 'csrfmiddlewaretoken': '{{ csrf_token }}', 'model': 'post', 'type': 'dislike'},
+                 dataType: "json",
+                 success: function(response) {
+                        $('.dislike_post').val(response.dislikes_count);
+                  },
+                  error: function(rs, e) {
+                         console.log(rs.responseText);
+                  }
+            });
+      });
+      $('.like_thread').click(function(){
+          $.ajax({
+                   type: "POST",
+                   url: "{% url 'main:like_and_dislike' %}",
+                   data: {'pk': $(this).attr('name'), 'csrfmiddlewaretoken': '{{ csrf_token }}', 'model': 'thread', 'type': 'like'},
+                   dataType: "json",
+                   success: function(response) {
+                          $('.like_thread').val(response.likes_count);
+                    },
+                    error: function(rs, e) {
+                           console.log(rs.responseText);
+                    }
+              });
+        });
+        $('.dislike_thread').click(function(){
+            $.ajax({
+                     type: "POST",
+                     url: "{% url 'main:like_and_dislike' %}",
+                     data: {'pk': $(this).attr('name'), 'csrfmiddlewaretoken': '{{ csrf_token }}', 'model': 'thread', 'type': 'dislike'},
+                     dataType: "json",
+                     success: function(response) {
+                            $('.dislike_thread').val(response.dislikes_count);
+                      },
+                      error: function(rs, e) {
+                             console.log(rs.responseText);
+                      }
+                });
+          });
+  </script>
+</body>
+</html>

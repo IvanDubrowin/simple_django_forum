@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+{% load staticfiles%}
+<div class="jumbotron text-center">
+    <img src="{% static 'images/Chat.png' %}" width="150" height="150"/>
+    <h1>Форум для общения на разные темы</h1>
+</div>
+    <div class="container-fluid">
+      <div class="row">
+        {% for thread in query %}
+        <div class="col-md-4">
+          <div class="card mb-4 box-shadow">
+            <div class="card-header text-center">
+              <h2>{{ thread.title }}</h2>
+            </div>
+            <div class="card-body">
+              <p class="card-text">{% if thread.image %}<img src="{{ thread.image.url }}"/>{% endif %}{{ thread.description }}</p>
+              <div class="card-footer">
+                <p class="text-right">Автор: {{ thread.user.username }}, {{ thread.date }}, Количество постов: {{ thread.post_count }}</p>
+              </div>
+              <form class="text-right" action="{% url 'main:thread' pk=thread.id %}">
+                <input class="btn btn-primary" type="submit" value="Открыть"/>
+              </form>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+    <div class="pagination justify-content-center mb-4">
+      <ul class="pagination bg-light pagination-circle pg-blue mb-0">
+          {% if query.has_previous %}
+            <li class="page-item"><a class="page-link" href="{{ query.previous_page_number }}">Назад</a></li>
+          {% else %}
+            <li class="page-item disabled"><a class="page-link" href="">Назад</a></li>
+          {% endif %}
+          {% if query.number|add:'-4' > 1 %}
+            <li href="{{ query.number|add:'-5' }}">&hellip;</li>
+          {% endif %}
+          {% for page in query.paginator.page_range %}
+            {% if query.number == page %}
+              <li class="page-item active"><a class="page-link" href="{{ page }}">{{ page }}</a></li>
+            {% elif page > query.number|add:'-3' and page < query.number|add:'3' %}
+              <li class="page-item"><a class="page-link" href="{{ page }}">{{ page }}</a></li>
+            {% endif %}
+          {% endfor %}
+          {% if query.paginator.num_pages > query.number|add:'4' %}
+            <li href="{{ query.number|add:'5' }}">&hellip;</li>
+          {% endif %}
+          {% if query.has_next %}
+              <li class="page-item"><a class="page-link" href="{{ query.next_page_number }}">Вперед</a></li>
+          {% else %}
+            <li class="page-item disabled"><a class="page-link" href="">Вперед</a></li>
+          {% endif %}
+      </ul>
+    </div>
+  </div>
+{% endblock %}

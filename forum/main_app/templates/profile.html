@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+{% load staticfiles%}
+<div class="container">
+  <div class="card pb-3 pt-3 pl-3 pr-3">
+  <form enctype="multipart/form-data" method="post">
+  {% csrf_token %}
+  <div class="row">
+    <div class="col-md-3 pb-3 pt-3 pl-3 pr-3">
+      <div class="image-upload">
+        <label for="file-input">
+          <img src="{{ profile.avatar.url }}" style="box-shadow: 3px 3px;"/>
+        </label>
+        {{ form.avatar }}
+      </div>
+    </div>
+    <div class="col-md-6 text-center">
+        <p>{{ form.first_name.label }}</p>
+        <p>{{ form.first_name }}</p>
+        <p>{{ form.first_name.error }}</p>
+        <p>{{ form.last_name.label }}</p>
+        <p>{{ form.last_name }}</p>
+        <p>{{ form.last_name.error }}</p>
+        <p>{{ form.city.label }}</p>
+        <p>{{ form.city }}</p>
+        <p>{{ form.city.error }}</p>
+        <p>{{ form.email.label }}</p>
+        <p>{{ form.email }}</p>
+        <p>{{ form.email.error }}</p>
+    </div>
+  </div>
+  <div class="text-center">
+    <button class="btn btn-primary" type="submit">Изменить данные</button>
+  </div>
+  </form>
+  </div>
+</div>
+{% endblock %}

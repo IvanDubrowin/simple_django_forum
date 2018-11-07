@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block content %}
+{% load staticfiles%}
+<div class="row justify-content-center mb-3">
+  <div class="col-md-2">
+  </div>
+  <div class="col-md-8">
+    <div class="card">
+      <div class="row">
+        <div class="col-md-2 pb-3 pt-3 pl-3 text-center">
+          <p><img src="{{ thread.user.avatar.url }}" width="80" height="80"></p>
+          <p>Автор: <a href="{% url 'main:about' pk=thread.user.id %}">{{ thread.user.username }}</a></p>
+          <p>{{ thread.date }}</p>
+          <p>Репутация: {{ thread.user.reputation }}</p>
+        </div>
+        <div class="col-md-10">
+          <div class="card-text pb-2 pt-2 pl-2 pr-2">
+            <h4 class="text-center">{{ thread.title }}</h4>
+            <p>{% if thread.image %}<img class="thread-image" src="{{ thread.image.url }}">{% endif %}{{ thread.description }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer text-muted">
+        {% if user.is_authenticated %}
+        <div class="text-right">
+          <i class="fa fa-thumbs-up fa-2x"></i><input id="like-button" class="btn btn-primary like_thread" type="button" name="{{ thread.id }}" value="{{ thread.likes_count }}" />
+          <i class="fa fa-thumbs-down fa-2x"></i><input id="like-button" class="btn btn-primary dislike_thread" type="button" name="{{ thread.id }}" value="{{ thread.dislikes_count }}" />
+        </div>
+        {% if user.id == thread.user.id %}
+          <button onclick="DeleteThread()" class="btn btn-primary">Удалить</button>
+          <script>
+            function DeleteThread() {
+              var r = confirm("Вы действительно хотите удалить эту тему?");
+              if (r == true) {
+                    $(location).attr('href', '{% url 'main:delete_thread' pk=thread.id %}');
+                   }
+              else {}
+              };
+          </script>
+        {% endif %}
+        {% else %}
+        <div class="text-right">
+          <i class="fa fa-thumbs-up fa-2x">{{ thread.likes_count }}</i>
+          <i class="fa fa-thumbs-down fa-2x">{{ thread.dislikes_count }}</i>
+        </div>
+        {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+    </div>
+  </div>
+  {% for post in posts %}
+  <div class="row justify-content-center mb-3">
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="row">
+          <div class="col-md-3 pb-3 pt-3 pl-3 pr-3 text-center">
+            <p><img src="{{ post.user.avatar.url }}" width="80" height="80"></p>
+            <p>Автор: <a href="{% url 'main:about' pk=post.user.id %}">{{ post.user.username }}</a></p>
+            <p>{{ post.date }}</p>
+            <p>Репутация: {{ post.user.reputation }}</p>
+          </div>
+          <div class="col-md-9">
+            <div class="card-text pb-2 pt-2 pl-2 pr-2">
+              <h4 class="text-center">{{ post.title }}</h4>
+              <p>{{ post.description }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer text-muted">
+          <div class="text-right">
+          {% if user.is_authenticated %}
+            <i class="text-left pr-3">Номер поста: {{ post.id }}</i>
+            <i class="fa fa-thumbs-up fa-2x"></i><input id="like-button" class="btn btn-primary like_post" type="button" name="{{ post.id }}" value="{{ post.likes_count }}" />
+            <i class="fa fa-thumbs-down fa-2x"></i><input id="like-button" class="btn btn-primary dislike_post" type="button" name="{{ post.id }}" value="{{ post.dislikes_count }}" />
+            <button onclick="ReplyPost{{ post.id }}()" class="btn btn-primary">Ответить на пост</button>
+            <script type="text/javascript">
+              function ReplyPost{{ post.id }}() {
+                  $('.reply-post').val('Ответ на пост' + ' ' + {{ post.id }});
+                };
+            </script>
+          {% else %}
+              <i class="text-left pr-3">Номер поста: {{ post.id }}</i>
+              <i class="fa fa-thumbs-up fa-2x">{{ post.likes_count }}</i>
+              <i class="fa fa-thumbs-down fa-2x">{{ post.dislikes_count }}</i>
+          {% endif %}
+          </div>
+          {% if user.id == post.user.id %}
+             <form action = "{% url 'main:delete_post' %}" method = "POST">
+               {% csrf_token %}
+               <input type="hidden" name="post_id" value="{{ post.id }}"/>
+               <input class="btn btn-primary" type="submit" value="удалить"/>
+             </form>
+          {% endif %}
+         </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+      </div>
+    </div>
+    {% endfor %}
+  {% if user.is_authenticated %}
+  <div class="row">
+    <div class="col-md-4">
+    </div>
+    <div class="col-md-4">
+      <div class="card-body text-center">
+        <form enctype="multipart/form-data" method="post">
+          {% csrf_token %}
+          {% for field in form %}
+            <h3>{{ field }}</h3>
+            {% for error in field.errors %}
+              <p style="color: red">{{ error|escape }}</p>
+            {% endfor %}
+          {% endfor %}
+          <button class="btn btn-primary" type="submit">Ответить</button>
+        </form>
+      </div>
+    </div>
+    <div class="col-md-4">
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

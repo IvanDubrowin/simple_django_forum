@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+{% load staticfiles%}
+<div class="container">
+  <div class="card pb-3 pt-3 pl-3 pr-3">
+    <div class="card-header text-center">
+      <h3>{{ user.username }}</h3>
+    </div>
+    <div class="row">
+      <div class="col-md-3 pb-3 pt-3 pl-3 pr-3">
+        <img src="{{ user.avatar.url }}" style="box-shadow: 3px 3px;"/>
+      </div>
+      <div class="col-md-6 text-center">
+        <p>Имя: {{ user.first_name }}</p>
+        <p>Фамилия: {{ user.last_name }}</p>
+        {% if user.gender == 'M' %}
+          <p>Пол: Мужчина</p>
+        {% else %}
+          <p>Пол: Женщина</p>
+        {% endif %}
+        <p>Город: {{ user.city }}</p>
+        <p>Email: {{ user.email }}</p>
+        <p>Репутация: {{ user.reputation }}</p>
+        <p>Количество тем: {{ user.thread_count }}</p>
+        <p>Количество постов: {{ user.post_count }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

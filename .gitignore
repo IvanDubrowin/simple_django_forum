@@ -1,0 +1,16 @@
+
+*.pyc
+
+*.jpg
+
+*.png
+
+forum/main_app/migrations/
+
+*.css
+
+forum/main_app/static/fonts/
+
+forum/main_app/static/js/
+
+forum/db\.sqlite3
